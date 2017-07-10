@@ -42,7 +42,7 @@ Each dataset has shape of 4-d tensor . The first number is the number of example
 The last three numbers describing the image shape are height,width and color channel respectively.
 All the images are in 32x32x3 shape .
 The plot_image() function gives a 4x4 grid of randomly selected 
-[image]: ./resource/traffic_sign_images.jpg
+![image](./resources/trafficSign16.png)
 
 Then I print the classes of the labels associated with each 16 images.
 The traffic sign data has total 43 classes and each class has different number of examples ranging from approximately 
@@ -57,7 +57,7 @@ left or right . Here I use random brightness to augment the data . I use tensorf
 and then evaluate it . 
 Then I concat the this new dataset with training data. So the new training size is double than the previous . 
 Some of the new images after adding distortions :
-[image]: ./resource/distorted_images.jpg
+![image](./resources/distorted_traffic_sign.png)
 
 There are many different ways to preprocess the data but I found that mean centred with standard deviation of 1 is the one of
 good choice to normalize the data . I used all the color channels. By using the normalizer() function I get the desired result .
@@ -110,7 +110,7 @@ I used a model architecture :
                                          |         input[32x32x3]         |
                                          ----------------------------------
                                          
-  
+ ![img](./resources/confusion_matrix_test.png) 
  
  ###Test a Model on New Images
 
@@ -145,60 +145,71 @@ The model was able to correctly guess 3 of the 5 traffic signs, which gives an a
 
 The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
 
-For the first image, the model is perfectly sure that this is a Road work sign (probability of 1.0), and the image does contain a Road work sign. The top five soft max probabilities were
+For the first image, the model is perfectly sure that this is a Road work sign (probability of 0.9999), and the image does contain a Road work sign. The top five soft max probabilities were
 
 ### For the image sign Road work ...
 
 |  Prediction        	|     Probability        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Road work             |  1.000000e+00     |            
-|  Go straight or right |  1.291265e-08     |
-|            Bumpy road |  4.650501e-09     |
-|    Beware of ice/snow |  4.461138e-10     |
-|         Slippery road |  1.535691e-10     |
+|             Road work  | 9.999995e-01     |
+|         Slippery road  | 5.349513e-07     |
+|     Bicycles crossing  | 4.380856e-09     |
+|    Beware of ice/snow  | 3.452387e-09     |
+|  Go straight or right  | 1.411123e-09     |
+
+![image](./resources/road_work_softmax_bar.png)
 
 For the first image, the model is relatively sure that this is a Turn Right Ahead sign (probability of 0.95), and the image does contain a Turn Right Ahead sign(probability of 0.0065). The top five soft max probabilities were...
 ### For the image sign Turn right ahead ...
 
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Roundabout mandatory   |    0.958046            |
-|     Turn left ahead    |   0.032786            |
-|   Turn right ahead     |  0.006579            |
-|  Speed limit (30km/h)  |     0.002521    |
-|  Right-of-way at the next intersection   |    0.000032   |
+| Speed limit (30km/h)  |    0.990222    |
+|                Yield  |    0.004425    |
+|      Turn left ahead  |    0.002943    |
+|           Ahead only  |    0.001359    |
+| Roundabout mandatory  |    0.000925    |
+
+![image](./resources/turn_right_softmax_bar.png)
 
 ### For the image sign yield
 For the first image, the model is absolutely sure that this is a yield sign (probability of 1.0), and the image does contain a yield sign. The top five soft max probabilities were
 
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
-|                                              Yield |  1.000000e+00 |
-|       No passing for vehicles over 3.5 metric tons |  5.751909e-13 |
-|                                    Turn left ahead |  2.799793e-14 |
-|  End of no passing by vehicles over 3.5 metric ... |  2.181578e-15 |
-|                                         Ahead only |  1.895228e-16 |
+|                                              Yield |  1.000000e+00   |
+|       No passing for vehicles over 3.5 metric tons |  1.748955e-12   |
+|                                    Turn left ahead |  4.124270e-15   |
+|  End of no passing by vehicles over 3.5 metric ... |  1.451681e-15   |
+|                                         Keep right |  7.540276e-17   |
+
+![image](./resources/yield_softmax_bar.png)
 
 For the first image, the model is relatively sure that this is a General caution sign (probability of 0.6), and the image does contain a Priority Road sign. The top five soft max probabilities were
 ### For the image sign Priority road
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
-|      General caution |  9.992123e-01    |
-|Wild animals crossing |  3.170191e-04    |
-|  Go straight or left |  2.881162e-04    |
-|      Traffic signals |  1.822880e-04    |
-| Speed limit (30km/h) |  1.785360e-07    |
+|    Go straight or left  |     0.541098        |
+|        General caution  |     0.429022        |
+|        Traffic signals  |     0.024712        |
+|  Wild animals crossing  |     0.005072        |
+|              Road work  |     0.000087        |
+
+![image](./resources/priority_road_softmax_bar.png)
 
 ### For the image sign No entry
 For the first image, the model is relatively sure that this is a No passing for vehicles over 3.5 metric tons sign (probability of 0.99), and the image does contain a No Entry sign. The top five soft max probabilities were
 
 |  Prediction       	|     Probability       					| 
 |:---------------------:|:---------------------------------------------:| 
-|No passing for vehicles over 3.5 metric tons |  9.999601e-01|
-|                                        Stop |  3.693475e-05|
-|                          Beware of ice/snow |  1.572997e-06|
-|                                       Yield |  9.409453e-07|
-|                               Priority road |  5.471924e-07|
+|                                        Stop |  6.232601e-01  |
+|No passing for vehicles over 3.5 metric tons |  2.725155e-01  |
+|                                       Yield |  1.042178e-01  |
+|                        Speed limit (80km/h) |  6.453646e-06  |
+|                          Beware of ice/snow |  4.445295e-08  |
+
+![image](./resources/no_entry_softmax_bar.png)
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
 ####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+![image](./resources/feature_map.png)
