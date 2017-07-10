@@ -169,6 +169,7 @@ For the first image, the model is relatively sure that this is a Turn Right Ahea
 |      Turn left ahead  |    0.002943    |
 |           Ahead only  |    0.001359    |
 | Roundabout mandatory  |    0.000925    |
+
 ![image](./resources/turn_right_softmax_bar.png)
 
 ### For the image sign yield
@@ -181,6 +182,7 @@ For the first image, the model is absolutely sure that this is a yield sign (pro
 |                                    Turn left ahead |  4.124270e-15   |
 |  End of no passing by vehicles over 3.5 metric ... |  1.451681e-15   |
 |                                         Keep right |  7.540276e-17   |
+
 ![image](./resources/yield_softmax_bar.png)
 
 For the first image, the model is relatively sure that this is a General caution sign (probability of 0.6), and the image does contain a Priority Road sign. The top five soft max probabilities were
@@ -192,6 +194,7 @@ For the first image, the model is relatively sure that this is a General caution
 |        Traffic signals  |     0.024712        |
 |  Wild animals crossing  |     0.005072        |
 |              Road work  |     0.000087        |
+
 ![image](./resources/priority_road_softmax_bar.png)
 
 ### For the image sign No entry
@@ -204,6 +207,7 @@ For the first image, the model is relatively sure that this is a No passing for 
 |                                       Yield |  1.042178e-01  |
 |                        Speed limit (80km/h) |  6.453646e-06  |
 |                          Beware of ice/snow |  4.445295e-08  |
+
 ![image](./resources/no_entry_softmax_bar.png)
 
 ### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
