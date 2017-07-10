@@ -31,23 +31,24 @@
 
 
 ### Exploring the dataset and visulazie some features 
-For exploring the dataset I used pandas,numpy and collection module and for visualization 
-I used matplotlib.pyplot module .
-The python inbuilt len() function is used to see the sizes of the datasets.
-number of example in training set
-number of example in validation set
-number of example in test set
-Then I used numpy's shape method to get the shape of the data sets as the datasets are in numpy.ndarray class format.
-Each dataset has shape of 4-d tensor . The first number is the number of example which I already obtained by len() function.
-The last three numbers describing the image shape are height,width and color channel respectively.
-All the images are in 32x32x3 shape .
-The plot_image() function gives a 4x4 grid of randomly selected 
+* For exploring the dataset I used pandas,numpy and collection module and for visualization I used matplotlib.pyplot module .
+* The python inbuilt len() function is used to see the sizes of the datasets.
+* number of example in training set : 34799
+* number of example in validation set : 4410
+* number of example in test set : 12630
+* Then I used numpy's shape method to get the shape of the data sets as the datasets are in numpy.ndarray class format.
+* Each dataset has shape of 4-d tensor . The first number is the number of example which I already obtained by len() function.
+* The last three numbers describing the image shape are height,width and color channel respectively.
+* All the images are in 32x32x3 shape .
+* The plot_image() function gives a 4x4 grid of randomly selected images from training data .
 ![image](./resources/trafficSign16.png)
 
-Then I print the classes of the labels associated with each 16 images.
-The traffic sign data has total 43 classes and each class has different number of examples ranging from approximately 
-150 to 2000. We can see the number of examples in each classes by using the Counter() object.
-Then I visualized the discrepency in the dataset using a bar plot . Each column gives the number of examples in that class.
+* Then I print the classes of the labels associated with each 16 images.
+* The traffic sign data has total 43 classes and each class has different number of examples ranging from approximately 
+150 to 2000. 
+* We can see the number of examples in each classes by using the Counter() object.
+* Then I visualized the discrepency in the dataset using a bar plot . Each column gives the number of examples in that class.
+![image](./resources/barplot_num_exmpl.png)
 
 ### Preprocessing the dataset
 
@@ -59,27 +60,30 @@ Then I concat the this new dataset with training data. So the new training size 
 Some of the new images after adding distortions :
 ![image](./resources/distorted_traffic_sign.png)
 
-There are many different ways to preprocess the data but I found that mean centred with standard deviation of 1 is the one of
-good choice to normalize the data . I used all the color channels. By using the normalizer() function I get the desired result .
+Here I have written 3 functions : 
+
+          1. gray_scale(): Takes a list of images as input and output a 32*32*1 grayscale image .
+          2. normalizer(): Min-Max scaling function.
+          3. normalizer_new() : To make the data with zero mean and stddev = 1 .
+          
+There are many different ways to preprocess the data but I found that mean centred with standard deviation of 1 is the one of good choice to normalize the data . I used all the color channels. By using the normalizer_new() function I get the desired result .
+Then I concat the distorted training data with original training data.
 Then I shuffled all the training data using scikit-learn's shuffle() function.
 
 ### Defining the model for training
 I used a model architecture :
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 3x3     	| 1x1 stride, same padding, outputs 32x32x64 	|
-| RELU					|												|
-| Max pooling	      	| 2x2 stride,  outputs 16x16x64 				|
-| Convolution 3x3	    | etc.      									|
-| Fully connected		| etc.        									|
-| Softmax				| etc.        									|
-|						|												|
-|						|												|
-                                         
+    * Here I used a self defined model .It is six networks deep . 
+    * It consists of 3 convolution layer and 3 fully connected layer . 
+    * The last layer is of 43 neurons to classify 43 classes.
+    * In every convolutional layer I used a maxpooling of 2*2 with stride = 1.
+    * At third convolutional layer I added dropout of 40% which kept the model from being overfitted.
+    * Then I flattened the layer with tf.contrib.layers.flatten() function . 
+    * Then I used softmax probability to find out the  probabilities of each classes. 
+    * The index with highest probability gives the class number .
+   
                                          ----------------------------------
-                                         |        softmax layer [43] 
+                                         |  fully connected layer [43]    |
                                          ----------------------------------
                                                          ||
                                          ----------------------------------
@@ -109,14 +113,25 @@ I used a model architecture :
                                          ----------------------------------
                                          |         input[32x32x3]         |
                                          ----------------------------------
+ 
+ I created three placeholder varibles x (num_of_image*height*width*3) and y (num. of images) and y_one_hot to encode 
+ y as one hot encoded.
+ The softmax_prob,model_prediction and actual_value variables would be used later to evaluate the softmax probabilities,
+ prediction by the model and its actual values respectively on the new test images.
+ 
+ Here I used the cross entropy function to measure the loss . And our optimization technique always tries to minimize the cross entropy to zero . Here we use tf.nn.softmax_cross_entropy_with_logits() function to evaluate the cross entropy .
+ 
+ To optimize the cost function I used AdamOptimizer. Throughout all the training I used a learning_rate = 0.001
+ 
+ ### The Confusion Matrix:
+ This gives a clear idea of what the model's predition performance .
                                          
  ![img](./resources/confusion_matrix_test.png) 
  
- ###Test a Model on New Images
+ ## Test the Model on New Images
 
-####1. Choose five German traffic signs found on the web and provide them in the report. For each image, discuss what quality or qualities might be difficult to classify.
+#### These are the five german traffic sign images I found on the web . 
 
-Here are five German traffic signs that I found on the web:
 
 ![image4](new_test_image/no-entry.jpg)
 ![image5](new_test_image/priority.jpg)
@@ -124,9 +139,6 @@ Here are five German traffic signs that I found on the web:
 ![image7](new_test_image/turn-right.jpg)
 ![image8](new_test_image/yield.jpg)
 
-The first image might be difficult to classify because ...
-
-####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set
 
 Here are the results of the prediction:
 
@@ -139,15 +151,10 @@ Here are the results of the prediction:
 | Priority Road   			| General caution 										|
 
 
-The model was able to correctly guess 3 of the 5 traffic signs, which gives an accuracy of 60%. This compares favorably to the accuracy on the test set of 93.8% .
+The model was able to correctly guess 3 of the 5 traffic signs, which gives an accuracy of 60%. This compares fair to the accuracy on the test set of 93.8% .
 
-####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
-
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
-
-For the first image, the model is perfectly sure that this is a Road work sign (probability of 0.9999), and the image does contain a Road work sign. The top five soft max probabilities were
-
-### For the image sign Road work ...
+### For the image sign Road work ...(Correctly Predicted)
+The model is perfectly sure that this is a Road work sign (probability of 0.9999), and the image does contain a Road work sign. The top five soft max probabilities were
 
 |  Prediction        	|     Probability        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -159,8 +166,10 @@ For the first image, the model is perfectly sure that this is a Road work sign (
 
 ![image](./resources/road_work_softmax_bar.png)
 
-For the first image, the model is relatively sure that this is a Turn Right Ahead sign (probability of 0.95), and the image does contain a Turn Right Ahead sign(probability of 0.0065). The top five soft max probabilities were...
-### For the image sign Turn right ahead ...
+### For the image sign Turn right ahead ...(Correctly Predicted)
+The model is relatively sure that this is a **Speed limit (30km/h)** sign (probability of 0.99), and the image does 
+contain a Turn Right Ahead sign. But as there is no image with the top five predictions it used next probability in 
+the softmax layer to identify it's as a **Turn Right Ahead** image .The top five soft max probabilities were...
 
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -172,8 +181,8 @@ For the first image, the model is relatively sure that this is a Turn Right Ahea
 
 ![image](./resources/turn_right_softmax_bar.png)
 
-### For the image sign yield
-For the first image, the model is absolutely sure that this is a yield sign (probability of 1.0), and the image does contain a yield sign. The top five soft max probabilities were
+### For the image sign yield...(Correctly Predicted)
+The model is absolutely sure that this is a yield sign (probability of 1.0), and the image does contain a yield sign. The top five soft max probabilities were
 
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -185,8 +194,9 @@ For the first image, the model is absolutely sure that this is a yield sign (pro
 
 ![image](./resources/yield_softmax_bar.png)
 
-For the first image, the model is relatively sure that this is a General caution sign (probability of 0.6), and the image does contain a Priority Road sign. The top five soft max probabilities were
-### For the image sign Priority road
+
+### For the image sign Priority road... (Worngly Predicted)
+The model is relatively sure that this is a **Go straight or left** sign (probability of 0.6), and the image does contain a **Priority Road** sign. The top five soft max probabilities were
 | Prediction         	|     Probability	        					| 
 |:---------------------:|:---------------------------------------------:| 
 |    Go straight or left  |     0.541098        |
@@ -197,8 +207,8 @@ For the first image, the model is relatively sure that this is a General caution
 
 ![image](./resources/priority_road_softmax_bar.png)
 
-### For the image sign No entry
-For the first image, the model is relatively sure that this is a No passing for vehicles over 3.5 metric tons sign (probability of 0.99), and the image does contain a No Entry sign. The top five soft max probabilities were
+### For the image sign No entry ... (Worngly Predicted)
+The model is relatively sure that this is a **Stop** sign (probability of 0.62), and the image does contain a **No Entry** sign. The top five soft max probabilities were
 
 |  Prediction       	|     Probability       					| 
 |:---------------------:|:---------------------------------------------:| 
@@ -210,6 +220,14 @@ For the first image, the model is relatively sure that this is a No passing for 
 
 ![image](./resources/no_entry_softmax_bar.png)
 
-### (Optional) Visualizing the Neural Network (See Step 4 of the Ipython notebook for more details)
-####1. Discuss the visual output of your trained network's feature maps. What characteristics did the neural network use to make classifications?
+
+From the above prediction we can realize that for Road Work (label = 25) and for yield(label = 13) the number of examples in these classes is much higher, nearabout 2500,3800 respectively in augmented training set . And it is the case for deep network . With higher training data comes great accuracy .
+
+### Visualizing the Neural Network
+
+Here we plot the first convolutional layer with relu activation with the help of given OutputFeatureMap() function . A 3*3 
+filter of depth 32 is applied . We can see the 32 different outputs when a 3*3 filter with stride 1 is applied to road work
+sign image . Here the weights are random truncated numbers with normal distribution. The weights initialization is a in depth research topic .
+
+The next levels are much more difficult to understand for it's higher dimensionality hence omitted.
 ![image](./resources/feature_map.png)
